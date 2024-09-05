@@ -1,14 +1,22 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.27;
 
-contract Counter {
-    uint256 public number;
+contract SimpleStorage {
+    uint256 public favoriteNum;
+    uint256[] public listFavNum;
 
-    function setNumber(uint256 newNumber) public {
-        number = newNumber;
+    struct Person {
+        uint256 favoriteNum;
+        string name;
     }
 
-    function increment() public {
-        number++;
+    Person[] public listOfPeeps;
+    mapping(string => uint256) public nameToFav;
+
+    // Store a new favorite number
+    function store(uint256 _favoriteNum) public {
+        favoriteNum = _favoriteNum;
     }
+
+   
 }
