@@ -1,0 +1,1 @@
+I promise to never use my pvt key associated with real money in plain text.
