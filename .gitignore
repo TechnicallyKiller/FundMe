@@ -13,3 +13,4 @@ docs/
 # Dotenv file
 file.env
 .env
+lib/forge-std
