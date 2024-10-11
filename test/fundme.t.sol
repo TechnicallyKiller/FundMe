@@ -15,14 +15,15 @@ contract FundmeTest is Test {
     function test_MinUSd() public {
         assertEq(fundme.minUsd(), 5e18);
     }
+
     function test_msgOwner() public {
         console.log(fundme.owner());
         console.log(msg.sender);
-        assertEq(fundme.owner(),address(this));
+        assertEq(fundme.owner(), address(this));
     }
     //solution for work with address outside of system
     //1-
-    //unit 
+    //unit
     //-testing a specific part of our code
     //2-integration
     //testing how our code works with other parts of code
@@ -30,6 +31,4 @@ contract FundmeTest is Test {
     //testing our code in simulated real env
     //4-Staging
     //testing our code in real world env
-    
-
 }
