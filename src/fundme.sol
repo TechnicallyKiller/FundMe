@@ -11,9 +11,11 @@ contract FundMe {
 
     address[] public funds;
     mapping(uint256 => address) public AmountToAddress;
-    mapping(address funder => uint256 funded) addressToAmount;
+    mapping(address funder => uint256 funded) private s_addressToAmount;
     // Function to get the price of Ethereum in USD
     address public owner;
+    address private s_funder;  // Change uint256 to address
+
     AggregatorV3Interface private s_pricefeed;
 
     constructor(address pricefeed) {
@@ -30,7 +32,7 @@ contract FundMe {
     function fund() public payable {
         require(msg.value.getConversionRate(s_pricefeed) >= minUsd, "You need to spend more ETH!");
         funds.push(msg.sender);
-        addressToAmount[msg.sender] = addressToAmount[msg.sender] + msg.value;
+        s_addressToAmount[msg.sender] = s_addressToAmount[msg.sender] + msg.value;
     }
 
     function tinyTip() public payable {
@@ -39,8 +41,8 @@ contract FundMe {
 
     function withdraw() public onlyOwner {
         for (uint256 funIndex = 0; funIndex < funds.length; funIndex++) {
-            address funder = funds[funIndex];
-            addressToAmount[funder] = 0;
+            s_funder = funds[funIndex];
+            s_addressToAmount[s_funder] = 0;
         }
         funds = new address[](0);
         // transfer
@@ -63,6 +65,16 @@ contract FundMe {
         require(msg.sender == owner, "sender is not owner");
         _;
     }
+    /** Getter Functions */
+
+function getAddressToAmountFunded(address fundingAddress) public view returns (uint256) {
+    return s_addressToAmount[fundingAddress];
+}
+
+function getFunder(uint256 index) public view returns (address) {
+    return funds[index];
+
+}
     // what happens if someone sends this contract ETH without calling the fund function
 
     receive() external payable {

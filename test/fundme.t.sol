@@ -12,15 +12,16 @@ contract FundmeTest is Test {
         fundme = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
     }
 
-    function test_MinUSd() public {
+    function test_MinUSd() view public {
         assertEq(fundme.minUsd(), 5e18);
     }
 
-    function test_msgOwner() public {
+    function test_msgOwner() view public {
         console.log(fundme.owner());
         console.log(msg.sender);
         assertEq(fundme.owner(), address(this));
     }
+    
     //solution for work with address outside of system
     //1-
     //unit

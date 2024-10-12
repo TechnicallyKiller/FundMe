@@ -3,11 +3,15 @@ pragma solidity ^0.8.26;
 
 import "forge-std/Scripts.sol";
 import {FundMe} from "../src/fundme.sol";
+import {HelperConfig} from "./HelperConfig.s.sol";
 
 contract deploySmartContract is Script {
     function run() external returns (FundMe) {
         vm.startBroadcast();
-        FundMe fundme = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        HelperConfig help1 = new HelperConfig();
+        address ethUsdpriceFeed = help1.activeConfig();
+        FundMe fundme = new FundMe(ethUsdpriceFeed);
+        
         vm.stopBroadcast();
         return fundme;
     }
