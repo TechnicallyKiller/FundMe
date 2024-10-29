@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import {deploySmartContract} from "../script/deploySmc.s.sol"";
+import {deploySmartContract} from "../script/deploySmc.s.sol";
 import {FundFundMe, WithdrawFundMe} from "../../script/Interactions.s.sol";
 import {FundMe} from "../../src/FundMe.sol";
 import {Test, console} from "forge-std/Test.sol";
