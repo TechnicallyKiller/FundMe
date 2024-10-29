@@ -7,9 +7,13 @@ import {deploySmartContract} from "../script/deploySmc.s.sol";
 
 contract FundmeTest is Test {
     FundMe fundme;
+    address USER = makeAddr("alex");
+    uint256 SEND_VALUE = 5 ether;
 
     function setUp() external {
-        fundme = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        deploySmartContract deploy1 = new deploySmartContract();
+        fundme= deploy1.run();
+        vm.deal(USER,10 ether);
     }
 
     function test_MinUSd() view public {
@@ -17,10 +21,64 @@ contract FundmeTest is Test {
     }
 
     function test_msgOwner() view public {
-        console.log(fundme.owner());
+        
         console.log(msg.sender);
-        assertEq(fundme.owner(), address(this));
+        assertEq(fundme.getOwner(), msg.sender);
     }
+    function testFundUpdatesFundDataStructure() public {
+    vm.prank(USER);
+    fundme.fund{value: 8 ether}();
+    uint256 amountFunded = fundme.getAddressToAmountFunded(USER);
+   
+    assertEq(amountFunded, 8 ether);
+
+}
+function testFundUpdatesFundDataStructure2() public {
+    vm.prank(USER);
+    fundme.fund{value:8 ether}();
+    address getFunder2 = fundme.getFunder(0);
+    assertEq(USER,getFunder2);
+}
+
+
+    function testFundFailsWIthoutEnoughETH() public {
+    vm.expectRevert(); // <- The next line after this one should revert! If not test fails.
+    fundme.fund();     // <- We send 0 value
+
+}
+function testOnlyOwnerCanWithdraw() public {
+    vm.prank(USER);
+    fundme.fund{value: SEND_VALUE}();
+
+    vm.expectRevert();
+    vm.prank(USER);
+    fundme.withdraw();
+
+}
+function testWithdrawfromSingleOwner() public {
+    uint256 startingContractBalance = address(fundme).balance;
+    uint256 startingOwnertBalance=fundme.getOwner().balance;
+
+    vm.startPrank(fundme.getOwner());
+    fundme.withdraw();
+    vm.stopPrank();
+
+    uint256 finalContractBalance= address(fundme).balance;
+    uint256 finalOwnertBalance=fundme.getOwner().balance;
+    assertEq(startingContractBalance+startingOwnertBalance,finalOwnertBalance);
+    assertEq(finalContractBalance,0);
+
+}
+function testPrintStorageData() public {
+    for (uint256 i = 0; i < 3; i++) {
+        bytes32 value = vm.load(address(fundme), bytes32(i));
+        console.log("Vaule at location", i, ":");
+        console.logBytes32(value);
+    }
+    console.log("PriceFeed address:", address(fundme.getPriceFeed()));
+
+}
+   
     
     //solution for work with address outside of system
     //1-

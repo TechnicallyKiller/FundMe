@@ -43,9 +43,8 @@ contract HelperConfig is Script{
              return activeConfig;
 
 }
-        vm.startBroadcast();
-        mockv3=new MockV3Aggregator(DECIMALS,INITIAL_PRICE);
-        vm.stopBroadcast();
+         mockv3 = new MockV3Aggregator(DECIMALS, INITIAL_PRICE);
+    
         
 
         NetworkConfig memory anvilConfig = NetworkConfig({

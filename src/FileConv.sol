@@ -10,9 +10,14 @@ library fileConv {
     }
     // Function to convert a value based on the price
 
-    function getConversionRate(uint256 ethAmount, AggregatorV3Interface pricefeed) internal view returns (uint256) {
-        uint256 ethPrice = getLatestPrice(pricefeed);
-        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
-        return ethAmountInUsd;
-    }
+   function getConversionRate(
+    uint256 ethAmount,
+    AggregatorV3Interface priceFeed
+) internal view returns (uint256) {
+    uint256 ethPrice = getLatestPrice(priceFeed);
+    uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1000000000000000000;
+    // the actual ETH/USD conversion rate, after adjusting the extra 0s.
+    return ethAmountInUsd;
+
+}
 }

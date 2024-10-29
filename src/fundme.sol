@@ -10,10 +10,10 @@ contract FundMe {
     using fileConv for uint256;
 
     address[] public funds;
-    mapping(uint256 => address) public AmountToAddress;
+    
     mapping(address funder => uint256 funded) private s_addressToAmount;
     // Function to get the price of Ethereum in USD
-    address public owner;
+    address private immutable owner;
     address private s_funder;  // Change uint256 to address
 
     AggregatorV3Interface private s_pricefeed;
@@ -23,7 +23,7 @@ contract FundMe {
         s_pricefeed = AggregatorV3Interface(pricefeed);
     }
 
-    uint256 public minUsd = 5e18;
+    uint256 public minUsd = 5*10**18;
 
     function getPricefeed() public view returns (uint256) {
         return s_pricefeed.version();
@@ -40,7 +40,8 @@ contract FundMe {
     }
 
     function withdraw() public onlyOwner {
-        for (uint256 funIndex = 0; funIndex < funds.length; funIndex++) {
+        uint256 fundersLen = funds.length;
+        for (uint256 funIndex = 0; funIndex < fundersLen; funIndex++) {
             s_funder = funds[funIndex];
             s_addressToAmount[s_funder] = 0;
         }
@@ -73,6 +74,14 @@ function getAddressToAmountFunded(address fundingAddress) public view returns (u
 
 function getFunder(uint256 index) public view returns (address) {
     return funds[index];
+
+}
+function getOwner() public view returns (address) {
+    return owner;
+
+}
+function getPriceFeed() public view returns (AggregatorV3Interface) {
+    return s_pricefeed;
 
 }
     // what happens if someone sends this contract ETH without calling the fund function
