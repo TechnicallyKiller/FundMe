@@ -11,7 +11,7 @@ contract deploySmartContract is Script {
         HelperConfig help1 = new HelperConfig();
         address ethUsdpriceFeed = help1.activeConfig();
         FundMe fundme = new FundMe(ethUsdpriceFeed);
-        
+
         vm.stopBroadcast();
         return fundme;
     }

@@ -12,74 +12,71 @@ contract FundmeTest is Test {
 
     function setUp() external {
         deploySmartContract deploy1 = new deploySmartContract();
-        fundme= deploy1.run();
-        vm.deal(USER,10 ether);
+        fundme = deploy1.run();
+        vm.deal(USER, 10 ether);
     }
 
-    function test_MinUSd() view public {
+    function test_MinUSd() public view {
         assertEq(fundme.minUsd(), 5e18);
     }
 
-    function test_msgOwner() view public {
-        
+    function test_msgOwner() public view {
         console.log(msg.sender);
         assertEq(fundme.getOwner(), msg.sender);
     }
+
     function testFundUpdatesFundDataStructure() public {
-    vm.prank(USER);
-    fundme.fund{value: 8 ether}();
-    uint256 amountFunded = fundme.getAddressToAmountFunded(USER);
-   
-    assertEq(amountFunded, 8 ether);
+        vm.prank(USER);
+        fundme.fund{value: 8 ether}();
+        uint256 amountFunded = fundme.getAddressToAmountFunded(USER);
 
-}
-function testFundUpdatesFundDataStructure2() public {
-    vm.prank(USER);
-    fundme.fund{value:8 ether}();
-    address getFunder2 = fundme.getFunder(0);
-    assertEq(USER,getFunder2);
-}
+        assertEq(amountFunded, 8 ether);
+    }
 
+    function testFundUpdatesFundDataStructure2() public {
+        vm.prank(USER);
+        fundme.fund{value: 8 ether}();
+        address getFunder2 = fundme.getFunder(0);
+        assertEq(USER, getFunder2);
+    }
 
     function testFundFailsWIthoutEnoughETH() public {
-    vm.expectRevert(); // <- The next line after this one should revert! If not test fails.
-    fundme.fund();     // <- We send 0 value
-
-}
-function testOnlyOwnerCanWithdraw() public {
-    vm.prank(USER);
-    fundme.fund{value: SEND_VALUE}();
-
-    vm.expectRevert();
-    vm.prank(USER);
-    fundme.withdraw();
-
-}
-function testWithdrawfromSingleOwner() public {
-    uint256 startingContractBalance = address(fundme).balance;
-    uint256 startingOwnertBalance=fundme.getOwner().balance;
-
-    vm.startPrank(fundme.getOwner());
-    fundme.withdraw();
-    vm.stopPrank();
-
-    uint256 finalContractBalance= address(fundme).balance;
-    uint256 finalOwnertBalance=fundme.getOwner().balance;
-    assertEq(startingContractBalance+startingOwnertBalance,finalOwnertBalance);
-    assertEq(finalContractBalance,0);
-
-}
-function testPrintStorageData() public {
-    for (uint256 i = 0; i < 3; i++) {
-        bytes32 value = vm.load(address(fundme), bytes32(i));
-        console.log("Vaule at location", i, ":");
-        console.logBytes32(value);
+        vm.expectRevert(); // <- The next line after this one should revert! If not test fails.
+        fundme.fund(); // <- We send 0 value
     }
-    console.log("PriceFeed address:", address(fundme.getPriceFeed()));
 
-}
-   
-    
+    function testOnlyOwnerCanWithdraw() public {
+        vm.prank(USER);
+        fundme.fund{value: SEND_VALUE}();
+
+        vm.expectRevert();
+        vm.prank(USER);
+        fundme.withdraw();
+    }
+
+    function testWithdrawfromSingleOwner() public {
+        uint256 startingContractBalance = address(fundme).balance;
+        uint256 startingOwnertBalance = fundme.getOwner().balance;
+
+        vm.startPrank(fundme.getOwner());
+        fundme.withdraw();
+        vm.stopPrank();
+
+        uint256 finalContractBalance = address(fundme).balance;
+        uint256 finalOwnertBalance = fundme.getOwner().balance;
+        assertEq(startingContractBalance + startingOwnertBalance, finalOwnertBalance);
+        assertEq(finalContractBalance, 0);
+    }
+
+    function testPrintStorageData() public {
+        for (uint256 i = 0; i < 3; i++) {
+            bytes32 value = vm.load(address(fundme), bytes32(i));
+            console.log("Vaule at location", i, ":");
+            console.logBytes32(value);
+        }
+        console.log("PriceFeed address:", address(fundme.getPriceFeed()));
+    }
+
     //solution for work with address outside of system
     //1-
     //unit
